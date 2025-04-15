@@ -1,0 +1,12 @@
+# postgres database
+- host : 192.168.0.47
+- port : 15432
+- database : postgres
+- username : pothole
+- password : pothole2314
+
+# server
+- port : 8080
+
+# kakao map
+- javascript key : 4976ae1449afdf3cc20859ec101de63f

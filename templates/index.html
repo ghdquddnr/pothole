@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>차량 데이터 지도</title>
+    <style>
+        #map {
+            width: 70%;
+            height: 100vh;
+            float: left;
+        }
+        #info-panel {
+            width: 30%;
+            height: 100vh;
+            float: right;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+        }
+        .info-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .info-item h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .info-item p {
+            margin: 5px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="info-panel"></div>
+
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4976ae1449afdf3cc20859ec101de63f"></script>
+    <script>
+        let map;
+        let markers = [];
+        let infoWindow;
+
+        // 지도 초기화
+        function initMap() {
+            const container = document.getElementById('map');
+            const options = {
+                center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 중심 좌표
+                level: 3
+            };
+            map = new kakao.maps.Map(container, options);
+            infoWindow = new kakao.maps.InfoWindow({zIndex:1});
+            
+            // 데이터 로드
+            loadVehicleData();
+        }
+
+        // 차량 데이터 로드
+        function loadVehicleData() {
+            fetch('/api/vehicle_data')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(item => {
+                        addMarker(item);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // 마커 추가
+        function addMarker(item) {
+            const position = new kakao.maps.LatLng(item.vhcle_lat, item.vhcle_lot);
+            const marker = new kakao.maps.Marker({
+                position: position,
+                map: map
+            });
+
+            // 마커 클릭 이벤트
+            kakao.maps.event.addListener(marker, 'click', function() {
+                showInfoPanel(item);
+            });
+
+            markers.push(marker);
+        }
+
+        // 정보 패널 표시
+        function showInfoPanel(item) {
+            const infoPanel = document.getElementById('info-panel');
+            infoPanel.innerHTML = `
+                <div class="info-item">
+                    <h3>차량 정보</h3>
+                    <p>단말기 ID: ${item.trmn_id}</p>
+                    <p>위도: ${item.vhcle_lat}</p>
+                    <p>경도: ${item.vhcle_lot}</p>
+                    <p>FCWS 코드: ${item.fcws_cd}</p>
+                    <p>LDWS 코드: ${item.ldws_cd}</p>
+                    <p>PCWS 코드: ${item.pcws_cd}</p>
+                    <p>DOWS 코드: ${item.dows_cd}</p>
+                    <p>차량 가속도: ${item.vhcle_acr}</p>
+                    <p>차로 코드: ${item.lane_cd}</p>
+                    <p>등록 일시: ${new Date(item.reg_dt).toLocaleString()}</p>
+                </div>
+            `;
+        }
+
+        // 페이지 로드 시 지도 초기화
+        window.onload = initMap;
+    </script>
+</body>
+</html> 
