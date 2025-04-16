@@ -45,6 +45,62 @@
         let markers = [];
         let infoWindow;
 
+        // 코드값 매핑 객체
+        const FCWS_MAP = {
+            '0': '검지없음',
+            '1': '버스',
+            '2': '승용차',
+            '3': '트럭',
+            '4': '기타',
+            '5': '특수차',
+            '6': '자전거/오토바이'
+        };
+        const LDWS_MAP = {
+            '-1': '신호없음',
+            '0': '검지없음',
+            '1': '좌측이탈',
+            '2': '우측이탈'
+        };
+        const PCWS_MAP = {
+            '-1': '신호없음',
+            '0': '정보없음',
+            '1': '보행자감지'
+        };
+        const DOWS_MAP = {
+            '-1': '신호없음',
+            '0': '정보없음',
+            '1': '포트홀',
+            '2': '좌측러버콘',
+            '3': '우측러버콘'
+        };
+        const LANE_MAP = {
+            '-1': '신호없음',
+            '0': '검지 못함',
+            '10': '버스전용차로',
+            '11': '중앙버스차로',
+            '21': '일반1차로',
+            '22': '일반2차로',
+            '23': '일반3차로',
+            '24': '일반4차로',
+            '25': '일반5차로',
+            '26': '일반6차로',
+            '99': '기타'
+        };
+        const LIGHT_STATUS_MAP = {
+            '-1': '신호없음',
+            '0': '소등',
+            '1': '점등'
+        };
+        const WIPER_STATUS_MAP = {
+            '0': '사용불가',
+            '1': 'off',
+            '2': '간헐',
+            '3': '저속',
+            '4': '고속',
+            '5': '워셔액',
+            '6': '자동'
+        };
+
         // 지도 초기화
         function initMap() {
             const container = document.getElementById('map');
@@ -93,16 +149,31 @@
             infoPanel.innerHTML = `
                 <div class="info-item">
                     <h3>차량 정보</h3>
-                    <p>단말기 ID: ${item.trmn_id}</p>
-                    <p>위도: ${item.vhcle_lat}</p>
-                    <p>경도: ${item.vhcle_lot}</p>
-                    <p>FCWS 코드: ${item.fcws_cd}</p>
-                    <p>LDWS 코드: ${item.ldws_cd}</p>
-                    <p>PCWS 코드: ${item.pcws_cd}</p>
-                    <p>DOWS 코드: ${item.dows_cd}</p>
-                    <p>차량 가속도: ${item.vhcle_acr}</p>
-                    <p>차로 코드: ${item.lane_cd}</p>
-                    <p>등록 일시: ${new Date(item.reg_dt).toLocaleString()}</p>
+                    <p>데이터ID: ${item.data_id}</p>
+                    <p>단말기ID: ${item.trmn_id}</p>
+                    <p>패킷전송년도: ${item.trsm_year}</p>
+                    <p>패킷전송시간: ${item.trsm_tm}</p>
+                    <p>패킷전송밀리초: ${item.trsm_ms}</p>
+                    <p>차량경도: ${item.vhcle_lot}</p>
+                    <p>차량위도: ${item.vhcle_lat}</p>
+                    <p>FCWS코드: ${FCWS_MAP[item.fcws_cd] ?? '알수없음'} (${item.fcws_cd})</p>
+                    <p>LDWS코드: ${LDWS_MAP[item.ldws_cd] ?? '알수없음'} (${item.ldws_cd})</p>
+                    <p>PCWS코드: ${PCWS_MAP[item.pcws_cd] ?? '알수없음'} (${item.pcws_cd})</p>
+                    <p>DOWS코드: ${DOWS_MAP[item.dows_cd] ?? '알수없음'} (${item.dows_cd})</p>
+                    <p>하향등상태코드: ${LIGHT_STATUS_MAP[item.lbhl_stat_cd] ?? '알수없음'} (${item.lbhl_stat_cd})</p>
+                    <p>상향등상태코드: ${LIGHT_STATUS_MAP[item.hbhl_stat_cd] ?? '알수없음'} (${item.hbhl_stat_cd})</p>
+                    <p>왼쪽지시등상태코드: ${LIGHT_STATUS_MAP[item.left_tusg_stat_cd] ?? '알수없음'} (${item.left_tusg_stat_cd})</p>
+                    <p>오른쪽지시등상태코드: ${LIGHT_STATUS_MAP[item.rght_tusg_stat_cd] ?? '알수없음'} (${item.rght_tusg_stat_cd})</p>
+                    <p>경고등상태코드: ${LIGHT_STATUS_MAP[item.hasg_stat_cd] ?? '알수없음'} (${item.hasg_stat_cd})</p>
+                    <p>자동조명상태코드: ${LIGHT_STATUS_MAP[item.alct_stat_cd] ?? '알수없음'} (${item.alct_stat_cd})</p>
+                    <p>주간주행등상태코드: ${LIGHT_STATUS_MAP[item.drlg_stat_cd] ?? '알수없음'} (${item.drlg_stat_cd})</p>
+                    <p>안개등상태코드: ${LIGHT_STATUS_MAP[item.fglg_stat_cd] ?? '알수없음'} (${item.fglg_stat_cd})</p>
+                    <p>주차등상태코드: ${LIGHT_STATUS_MAP[item.pklg_stat_cd] ?? '알수없음'} (${item.pklg_stat_cd})</p>
+                    <p>전면와이퍼상태코드: ${WIPER_STATUS_MAP[item.frnt_wiper_stat_cd] ?? '알수없음'} (${item.frnt_wiper_stat_cd})</p>
+                    <p>차량가속도: ${item.vhcle_acr}</p>
+                    <p>차로코드: ${LANE_MAP[item.lane_cd] ?? '알수없음'} (${item.lane_cd})</p>
+                    <p>등록자ID: ${item.rgtr_id}</p>
+                    <p>등록일시: ${new Date(item.reg_dt).toLocaleString()}</p>
                 </div>
             `;
         }

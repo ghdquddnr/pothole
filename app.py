@@ -8,7 +8,7 @@ app = Flask(__name__)
 # 데이터베이스 연결 설정
 def get_db_connection():
     conn = psycopg2.connect(
-        host='192.168.0.47',
+        host='hongbw.iptime.org',
         port=15432,
         database='postgres',
         user='pothole',
@@ -28,13 +28,13 @@ def get_vehicle_data():
         
         cur.execute('''
             SELECT 
-                data_id, trmn_id, vhcle_lot, vhcle_lat,
+                data_id, trmn_id, trsm_year, trsm_tm, trsm_ms, vhcle_lot, vhcle_lat,
                 fcws_cd, ldws_cd, pcws_cd, dows_cd,
                 lbhl_stat_cd, hbhl_stat_cd, left_tusg_stat_cd,
                 rght_tusg_stat_cd, hasg_stat_cd, alct_stat_cd,
                 drlg_stat_cd, fglg_stat_cd, pklg_stat_cd,
                 frnt_wiper_stat_cd, vhcle_acr, lane_cd,
-                reg_dt
+                rgtr_id, reg_dt, trsm_mt, trsm_dy
             FROM vehicle_data
             ORDER BY reg_dt DESC
             LIMIT 1000
